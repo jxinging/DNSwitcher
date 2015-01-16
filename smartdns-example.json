@@ -1,0 +1,20 @@
+{
+  "email": "your_email@example.com",
+  "password": "your_password",
+  "domains": [
+    {
+      "domain": "example.com",
+      "hosts": [
+        "s1.example.com",
+        "127.0.0.1"
+      ]
+    },
+    {
+      "domain": "example2.com",
+      "hosts": [
+        "s1.example2.com",
+        "127.0.0.1"
+      ]
+    }
+  ]
+}
