@@ -1,0 +1,3 @@
+[submodule "dnspod-python"]
+	path = dnspod-python
+	url = https://github.com/DNSPod/dnspod-python.git
