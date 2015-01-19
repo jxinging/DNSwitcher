@@ -5,19 +5,19 @@ from setuptools import setup
 
 
 setup(
-    name='SmartDns',
+    name='DNSwitcher',
     version='0.02',
     description='',
     author='jinxing',
     author_email='jxinging@gmail.com',
-    packages=['smartdns'],
-    data_files=[('', ['smartdns-example.json'])],
+    packages=['dnswitcher'],
+    data_files=[('', ['dnswitcher-example.json'])],
     long_description="",
 
     install_requires=[],
     entry_points={
         "console_scripts": [
-            "smartdns = smartdns:main"
+            "dnswitcher = dnswitcher:main"
         ]
     }
 )
