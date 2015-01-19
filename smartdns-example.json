@@ -2,6 +2,8 @@
   "email": "your_email@example.com",
   "password": "your_password",
   "debug": true,
+  "sleep": 30,
+  "history": "./smartdns.history.json",
   "domains": [
     {
       "domain": "example.com",

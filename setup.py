@@ -6,15 +6,15 @@ from setuptools import setup
 
 setup(
     name='SmartDns',
-    version='0.01',
+    version='0.02',
     description='',
     author='jinxing',
     author_email='jxinging@gmail.com',
     packages=['smartdns'],
-    data_files=[('./', ['smartdns-example.json'])],
+    data_files=[('', ['smartdns-example.json'])],
     long_description="",
 
-    install_requires=['ping'],
+    install_requires=[],
     entry_points={
         "console_scripts": [
             "smartdns = smartdns:main"
