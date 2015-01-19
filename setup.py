@@ -11,7 +11,7 @@ setup(
     author='jinxing',
     author_email='jxinging@gmail.com',
     packages=['smartdns'],
-	data_files=[('/etc/', ['smartdns-example.json'])],
+    data_files=[('./', ['smartdns-example.json'])],
     long_description="",
 
     install_requires=['ping'],
