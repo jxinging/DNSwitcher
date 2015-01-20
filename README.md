@@ -12,7 +12,7 @@ python setup.py install
 
 ## Usage
 1. `cp dnswitcher-example.json /etc/dnswitcher.json`
-2. 编辑 `/etc/dnswitcher.json` 的 `email` 和 `password` 字段，用于登陆 dnspod
-3. `dnswitcher /etc/dnswitcher.json`
+2. 编辑 `/etc/dnswitcher.json` 的 `email` 和 `password` 字段，用于登陆 dnspod。编辑 `domains` 字段配置需要自动切换的域名和主机(或 CNAME)
+4. `dnswitcher /etc/dnswitcher.json`
 
 ## TODO
