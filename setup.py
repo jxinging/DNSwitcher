@@ -7,9 +7,10 @@ from setuptools import setup
 setup(
     name='DNSwitcher',
     version='0.02',
-    description='',
+    description='smart dns switcher',
     author='jinxing',
     author_email='jxinging@gmail.com',
+    url="https://github.com/jinxingxing/DNSwitcher",
     packages=['dnswitcher'],
     data_files=[('', ['dnswitcher-example.json'])],
     long_description="",
