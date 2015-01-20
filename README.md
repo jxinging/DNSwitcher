@@ -12,7 +12,7 @@ python setup.py install
 
 ## Config
 示例配置见：dnswitcher-example.json
-```json
+```shell
 {
   "email": "your_email@example.com",  # dnspod 用户名
   "password": "your_password",        # dnspod 密码
