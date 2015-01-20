@@ -29,11 +29,15 @@ def do_main(conf_file):
 
 
 def main():
-    try:
-        while 1:
-            do_main(sys.argv[1])
-    except KeyboardInterrupt, _:
-        sys.exit(0)
+    conf = sys.argv[1]
+    while 1:
+        try:
+            do_main(conf)
+        except KeyboardInterrupt, _:
+            sys.exit(0)
+        except Exception, e:
+            plog(e.message)
+            time.sleep(60)
 
 if __name__ == "__main__":
     main()
