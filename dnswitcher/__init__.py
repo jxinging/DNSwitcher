@@ -9,8 +9,7 @@ from updater import update_record
 from utils import plog
 
 
-def do_main(conf_file):
-    conf = load_config(conf_file)
+def do_main(conf):
     for info in conf.get("domains"):
         domain = info["domain"]
         hosts = info["hosts"]
@@ -23,21 +22,22 @@ def do_main(conf_file):
         new_value = update_record(domain, fastest_host)
         plog(u"新的记录值: %s => %s", domain, new_value)
 
-    sleep_time = conf.get("sleep") * 60
-    plog(u"%dm 后执行下一次检查", conf.get("sleep"))
-    time.sleep(sleep_time)
-
 
 def main():
-    conf = sys.argv[1]
+    conf_file = sys.argv[1]
+    conf = load_config(conf_file)
     while 1:
         try:
             do_main(conf)
+            sleep_minute = conf.get("sleep", 30)
+            plog(u"%d 分钟后执行下一次检查", sleep_minute)
+            time.sleep(sleep_minute * 60)
         except KeyboardInterrupt, _:
             sys.exit(0)
         except Exception, e:
             plog(e.message)
             time.sleep(60)
+
 
 if __name__ == "__main__":
     main()
