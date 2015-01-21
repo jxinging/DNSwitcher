@@ -3,7 +3,7 @@
   "password": "your_password",
   "debug": true,
   "sleep": 30,
-  "history": "./dnswitcher-history.json",
+  "history": "dnswitcher-history.json",
   "domains": [
     {
       "domain": "example.com",

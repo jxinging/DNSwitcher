@@ -18,7 +18,7 @@ python setup.py install
   "password": "your_password",        # dnspod 密码
   "debug": true,  # 开启调试模式 (打印调试日志)
   "sleep": 30,    # 监控的间隔时间(分钟)
-  "history": "./dnswitcher-history.json",  # 记录历史数据的文件
+  "history": "dnswitcher-history.json",  # 记录历史数据的文件名
   "domains": [
     {
       "domain": "example.com",  # 监控的域名
