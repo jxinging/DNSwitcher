@@ -6,6 +6,7 @@ import os
 import re
 import threading
 import Queue
+import tempfile
 
 from utils import pdebug
 from config import get
@@ -129,14 +130,15 @@ def calc_overall_score(host, curr_score, history_data):
 
 
 def load_history():
-    history_file = get("history")
+    history_file = os.path.join(tempfile.gettempdir(), get("history"))
     if not os.path.exists(history_file):
         return []
 
+    pdebug("load data from %s", history_file)
     return json.load(open(history_file))
 
 
 def dump_history(data):
-    history_file = get("history")
+    history_file = os.path.join(tempfile.gettempdir(), get("history"))
     indent = 4 if get("debug") else None
     json.dump(data, open(history_file, "wb"), indent=indent)
