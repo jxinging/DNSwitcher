@@ -84,7 +84,7 @@ def pick_fastest_ping(hosts):
     for host in hosts:
         # 调用系统命令，不需要 root 权限即可进行 ping 测试
         t = threading.Thread(name=host, target=m_sys_ping, args=(host,),
-                             kwargs={"count": 5, "psize": 512})
+                             kwargs={"count": 10, "psize": 512})
         t.daemon = True
         t.start()
         threads.append(t)
@@ -113,7 +113,7 @@ def pick_fastest_ping(hosts):
 
     history_data.append(curr_data)
     if len(history_data) > 10:
-        history_data.pop()
+        history_data.pop(0)
     dump_history(history_data)
 
     return fastest_host
@@ -126,7 +126,7 @@ def calc_overall_score(host, curr_score, history_data):
         history_score += data.get(host, {}).get("score", 0) * percent
         percent -= 0.1
 
-    return history_score + curr_score
+    return int(history_score + curr_score)
 
 
 def load_history():
@@ -142,3 +142,4 @@ def dump_history(data):
     history_file = os.path.join(tempfile.gettempdir(), get("history"))
     indent = 4 if get("debug") else None
     json.dump(data, open(history_file, "wb"), indent=indent)
+

@@ -35,7 +35,7 @@ def main():
         except KeyboardInterrupt, _:
             sys.exit(0)
         except Exception, e:
-            plog(e.message)
+            plog(str(e.message))
             time.sleep(60)
 
 
