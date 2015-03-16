@@ -112,7 +112,8 @@ def pick_fastest_ping(hosts):
             fastest_score = overall_score
 
     history_data.append(curr_data)
-    if len(history_data) > 10:
+    history_len = 1440 / get("sleep")  # 记录24小时的数据
+    if len(history_data) > history_len:
         history_data.pop(0)
     dump_history(history_data)
 
