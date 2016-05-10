@@ -6,7 +6,7 @@ from setuptools import setup
 
 setup(
     name='DNSwitcher',
-    version='0.03',
+    version='0.3.1',
     description='smart dns switcher',
     author='jinxing',
     author_email='jxinging@gmail.com',
