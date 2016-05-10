@@ -8,7 +8,7 @@ import threading
 import Queue
 import tempfile
 
-from utils import pdebug
+from utils import pdebug, plog
 from config import get
 import time
 
@@ -20,7 +20,7 @@ except ImportError, _:
 
 def net_score(loss, rtt):
     """根据丢包率和延时得到一个网络质量的评分，值越小越好"""
-    return int(loss*10 + rtt/10)
+    return int(loss * 10 + rtt / 10)
 
 
 def parse_ping_result(res):
@@ -54,7 +54,28 @@ def sys_ping(dest, count=4, psize=64, timeout=2):
         cmd = "ping -c %d -s %d -W %d %s" % (count, psize, timeout, dest)
 
     res = os.popen(cmd).read()
-    return parse_ping_result(res)
+    loss, rtt = parse_ping_result(res)
+    if rtt is None:
+        score = None
+    else:
+        score = net_score(loss, rtt)
+    plog("%s, loss: %d%%, rtt: %s, score: %s", dest, loss, rtt, score)
+    return score
+
+
+def request_url_by_ss(server_host, server_port, password, method, url, timeout=5):
+    from ssclient import SimpleSSClient
+    cli = SimpleSSClient(server_host, server_port, password, method, timeout=timeout)
+    try:
+        st = time.time()
+        cli.get(url)
+        cost_time = time.time() - st
+        return cost_time
+    except Exception as e:
+        plog("%s: %s", server_host, e)
+        import traceback
+        pdebug("%s: %s", server_host, traceback.format_exc())
+        return None
 
 
 class QueueWrap(object):
@@ -63,8 +84,7 @@ class QueueWrap(object):
         self.func = None
 
     def wrap(self, *args, **kwargs):
-        item = [args[0]]
-        item.extend(self.func(*args, **kwargs))
+        item = [args[0], self.func(*args, **kwargs)]
         self.queue.put(item)
 
     def __call__(self, func):
@@ -72,19 +92,17 @@ class QueueWrap(object):
         return self.wrap
 
 
-def pick_fastest_ping(hosts):
+def pick_fastest_host(hosts, checker):
     history_data = load_history()
     fastest_score = sys.maxint
     fastest_host = None
     curr_data = {"time": int(time.time())}
 
     queue = Queue.Queue()
-    m_sys_ping = QueueWrap(queue)(sys_ping)
+    wrapped_checker = QueueWrap(queue)(checker)
     threads = []
     for host in hosts:
-        # 调用系统命令，不需要 root 权限即可进行 ping 测试
-        t = threading.Thread(name=host, target=m_sys_ping, args=(host,),
-                             kwargs={"count": 10, "psize": 512})
+        t = threading.Thread(name=host, target=wrapped_checker, args=(host,))
         t.daemon = True
         t.start()
         threads.append(t)
@@ -94,19 +112,16 @@ def pick_fastest_ping(hosts):
 
     while queue.qsize() > 0:
         try:
-            r = queue.get()
-            host, loss, artt = r
+            host, score = queue.get()
         except Queue.Empty, _:
             continue
 
-        if artt is None:
-            artt = 9999
+        if score is None:
+            score = 9999
 
-        score = net_score(loss, artt)
         overall_score = calc_overall_score(host, score, history_data)
-        pdebug("%s, loss: %d%%, rtt: %d, score: %d, overall_score: %d",
-               host, loss, artt, score, overall_score)
-        curr_data[host] = {"loss": loss, "rtt": artt, "score": score}
+        plog("%s, score: %.2f, overall_score: %.2f", host, score, overall_score)
+        curr_data[host] = {"score": score}
         if overall_score < fastest_score:
             fastest_host = host
             fastest_score = overall_score
@@ -135,7 +150,7 @@ def load_history():
     if not os.path.exists(history_file):
         return []
 
-    pdebug("load data from %s", history_file)
+    plog("load data from %s", history_file)
     return json.load(open(history_file))
 
 
