@@ -8,7 +8,7 @@ import threading
 import Queue
 import tempfile
 
-from utils import pdebug, plog
+from utils import logger
 from config import get
 import time
 
@@ -59,7 +59,7 @@ def sys_ping(dest, count=4, psize=64, timeout=2):
         score = None
     else:
         score = net_score(loss, rtt)
-    plog("%s, loss: %d%%, rtt: %s, score: %s", dest, loss, rtt, score)
+    logger.info("%s, loss: %d%%, rtt: %s, score: %s", dest, loss, rtt, score)
     return score
 
 
@@ -72,9 +72,9 @@ def request_url_by_ss(server_host, server_port, password, method, url, timeout=5
         cost_time = time.time() - st
         return cost_time
     except Exception as e:
-        plog("%s: %s", server_host, e)
+        logger.error("%s: %s", server_host, e)
         import traceback
-        pdebug("%s: %s", server_host, traceback.format_exc())
+        logger.debug("%s: %s", server_host, traceback.format_exc())
         return None
 
 
@@ -120,7 +120,7 @@ def pick_fastest_host(hosts, checker):
             score = 9999
 
         overall_score = calc_overall_score(host, score, history_data)
-        plog("%s, score: %.2f, overall_score: %.2f", host, score, overall_score)
+        logger.info("%s, score: %.2f, overall_score: %.2f", host, score, overall_score)
         curr_data[host] = {"score": score}
         if overall_score < fastest_score:
             fastest_host = host
@@ -150,7 +150,7 @@ def load_history():
     if not os.path.exists(history_file):
         return []
 
-    plog("load data from %s", history_file)
+    logger.info("load data from %s", history_file)
     return json.load(open(history_file))
 
 

@@ -6,8 +6,9 @@ import time
 from config import load_config
 from checker import pick_fastest_host, sys_ping, request_url_by_ss
 from updater import update_record
-from utils import plog
+from utils import logger
 from functools import partial
+import logging
 
 
 def do_main(conf):
@@ -30,29 +31,35 @@ def do_main(conf):
     for info in conf.get("domains"):
         domain = info["domain"]
         hosts = info["hosts"]
-        plog(u"检查域名: %s", domain)
-        fastest_host = pick_fastest_host(hosts, checker_func)
-        plog(u"响应最快的主机: %s", fastest_host)
+        logger.info(u"检查域名: %s", domain)
+        for i in range(3):
+            fastest_host = pick_fastest_host(hosts, checker_func)
+        logger.info(u"响应最快的主机: %s", fastest_host)
 
         new_value = update_record(domain, fastest_host)
-        plog(u"新的记录值: %s => %s", domain, new_value)
+        logger.info(u"新的记录值: %s => %s", domain, new_value)
 
 
 def main():
     conf_file = sys.argv[1]
     conf = load_config(conf_file)
+    if conf.get('debug', False):
+        logging.basicConfig(level=logging.DEBUG)
+    else:
+        logging.basicConfig(level=logging.INFO)
+
     while 1:
         try:
             do_main(conf)
             sleep_minute = conf.get("sleep", 30)
-            plog(u"%d 分钟后执行下一次检查", sleep_minute)
+            logger.info(u"%d 分钟后执行下一次检查", sleep_minute)
             time.sleep(sleep_minute * 60)
         except KeyboardInterrupt, _:
             sys.exit(0)
         except Exception, e:
             import traceback
             traceback.print_exc()
-            plog(str(e.message))
+            logger.info(str(e.message))
             time.sleep(60)
 
 
